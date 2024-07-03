@@ -1,17 +1,17 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController {
-    struct QuizQuestion {
+    private struct QuizQuestion {
       let image: String
       let text: String
       let correctAnswer: Bool
     }
-    struct QuizStepViewModel {
+    private struct QuizStepViewModel {
       let image: UIImage
       let question: String
       let questionNumber: String
     }
-    struct QuizResultsViewModel {
+    private struct QuizResultsViewModel {
       let title: String
       let text: String
       let buttonText: String
@@ -35,6 +35,8 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var textLabel: UILabel!
     @IBOutlet weak private var counterLabel: UILabel!
+    @IBOutlet weak private var noButton: UIButton!
+    @IBOutlet weak private var yesButton: UIButton!
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -82,6 +84,12 @@ final class MovieQuizViewController: UIViewController {
     }
     
     private func handleAnswer(isYes: Bool) {
+        toggleButtonsActivity()
+        
+        guard questions.indices.contains(currentQuestionIndex) else {
+            return
+        }
+        
         let isCorrect = questions[currentQuestionIndex].correctAnswer == isYes
         
         showAnswerResult(isCorrect: isCorrect)
@@ -93,6 +101,7 @@ final class MovieQuizViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
            self.showNextQuestionOrResults()
            self.resetImageViewBorder()
+           self.toggleButtonsActivity()
         }
     }
     
@@ -105,12 +114,21 @@ final class MovieQuizViewController: UIViewController {
         } else {
             currentQuestionIndex += 1
             
+            guard questions.indices.contains(currentQuestionIndex) else {
+                return
+            }
+            
             showQuestion(quiz: convert(model: questions[currentQuestionIndex]))
         }
     }
     
     private func resetImageViewBorder() {
         imageView.layer.borderWidth = 0
+    }
+    
+    private func toggleButtonsActivity() {
+        noButton.isEnabled.toggle()
+        yesButton.isEnabled.toggle()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
