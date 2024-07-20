@@ -6,8 +6,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
-    private var alertPresentor: AlertPresentorProtocol?
-    private var statisicService: StatisticServiceProtocol = StatisticService()
+    private var alertPresenter: AlertPresenterProtocol?
+    private var statisticService: StatisticServiceProtocol = StatisticService()
     
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var textLabel: UILabel!
@@ -20,7 +20,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         
         questionFactory = QuestionFactory(delegate: self)
-        alertPresentor = AlertPresentor(delegate: self)
+        alertPresenter = AlertPresenter(delegate: self)
         
         questionFactory?.requestNextQuestion()
     }
@@ -54,7 +54,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showResult(quiz result: QuizResultsViewModel) {
-        alertPresentor?.showAlert(alert: AlertModel(title: result.title, message: result.text, buttonText: result.buttonText, completion: {
+        alertPresenter?.showAlert(alert: AlertModel(title: result.title, message: result.text, buttonText: result.buttonText, completion: {
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
             
@@ -99,11 +99,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            statisicService.store(correct: correctAnswers, total: questionsAmount)
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
             
-            let gamesCount = statisicService.gamesCount
-            let bestGame = statisicService.bestGame
-            let totalAccuracy = statisicService.totalAccuracy
+            let gamesCount = statisticService.gamesCount
+            let bestGame = statisticService.bestGame
+            let totalAccuracy = statisticService.totalAccuracy
             
             let text = "Ваш результат \(correctAnswers)/\(questionsAmount)\n" +
                        "Количество сыгранных игр: \(gamesCount)\n" +

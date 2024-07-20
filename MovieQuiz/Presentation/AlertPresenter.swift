@@ -1,5 +1,5 @@
 //
-//  AlertPresentor.swift
+//  AlertPresenter.swift
 //  MovieQuiz
 //
 //  Created by Igor Kirpinev on 18.07.2024.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AlertPresentor: AlertPresentorProtocol {
+class AlertPresenter: AlertPresenterProtocol {
     weak var delegate: UIViewController?
     
     init(delegate: UIViewController) {
