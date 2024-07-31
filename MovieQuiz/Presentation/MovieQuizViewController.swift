@@ -14,15 +14,17 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet weak private var counterLabel: UILabel!
     @IBOutlet weak private var noButton: UIButton!
     @IBOutlet weak private var yesButton: UIButton!
+    @IBOutlet weak private var loadingActivityIndicator: UIActivityIndicatorView!
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        questionFactory = QuestionFactory(delegate: self)
+        questionFactory = QuestionFactory(delegate: self, moviesLoader: MoviesLoader())
         alertPresenter = AlertPresenter(delegate: self)
         
-        questionFactory?.requestNextQuestion()
+        showLoadingIndicator()
+        questionFactory?.loadData()
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -39,9 +41,28 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
+    func didLoadDataFromServer() {
+        hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
+    }
+    
+    func showLoadingIndicator() {
+        loadingActivityIndicator.isHidden = false
+        loadingActivityIndicator.startAnimating()
+    }
+    
+    func hideLoadingIndicator() {
+        loadingActivityIndicator.isHidden = true
+        loadingActivityIndicator.stopAnimating()
+    }
+    
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
@@ -87,13 +108,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-           guard let self else {
-             return
-           }
+            guard let self else {
+                return
+            }
             
-           self.showNextQuestionOrResults()
-           self.resetImageViewBorder()
-           self.toggleButtonsActivity()
+            self.showNextQuestionOrResults()
+            self.resetImageViewBorder()
+            self.toggleButtonsActivity()
         }
     }
     
@@ -106,9 +127,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             let totalAccuracy = statisticService.totalAccuracy
             
             let text = "Ваш результат \(correctAnswers)/\(questionsAmount)\n" +
-                       "Количество сыгранных игр: \(gamesCount)\n" +
-                       "Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))\n" +
-                       "Средняя точность: \(String(format: "%.2f", totalAccuracy))%"
+            "Количество сыгранных игр: \(gamesCount)\n" +
+            "Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))\n" +
+            "Средняя точность: \(String(format: "%.2f", totalAccuracy))%"
             let model = QuizResultsViewModel(title: "Этот раунд окончен!", text: text, buttonText: "Сыграть ещё раз")
             
             showResult(quiz: model)
@@ -126,6 +147,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func toggleButtonsActivity() {
         noButton.isEnabled.toggle()
         yesButton.isEnabled.toggle()
+    }
+    
+    private func showNetworkError(message: String) {
+        hideLoadingIndicator()
+        
+        alertPresenter?.showAlert(alert: AlertModel(title: "Ошибка", message: message, buttonText: "Попробовать еще раз", completion: { [weak self] in
+            guard let self else {
+                return
+            }
+            
+            self.currentQuestionIndex = 0
+            self.correctAnswers = 0
+            
+            self.showLoadingIndicator()
+            self.questionFactory?.loadData()
+        }))
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
@@ -199,4 +236,4 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
  Настоящий рейтинг: 5,8
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: НЕТ
-*/
+ */
