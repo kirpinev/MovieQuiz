@@ -107,19 +107,25 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="W4x-4m-8bR">
+                                <rect key="frame" x="177.66666666666666" y="396" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="nkN-Zd-7lx" secondAttribute="trailing" constant="20" id="6iT-DX-AfY"/>
                             <constraint firstItem="nkN-Zd-7lx" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Be8-sc-SLC"/>
+                            <constraint firstItem="W4x-4m-8bR" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Snw-YM-e9i"/>
                             <constraint firstItem="nkN-Zd-7lx" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="kh9-4C-DqD"/>
                             <constraint firstItem="nkN-Zd-7lx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="rA7-PD-Dn5"/>
+                            <constraint firstItem="W4x-4m-8bR" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="szF-OA-ubw"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="counterLabel" destination="VJ2-5C-VnH" id="D3e-mE-sbd"/>
                         <outlet property="imageView" destination="MJv-z1-Y1o" id="2xw-qe-3oD"/>
+                        <outlet property="loadingActivityIndicator" destination="W4x-4m-8bR" id="ynz-2E-kr5"/>
                         <outlet property="noButton" destination="2gX-KS-P0Y" id="ss1-zi-s7O"/>
                         <outlet property="textLabel" destination="kss-Pz-X6o" id="kRI-AE-eCX"/>
                         <outlet property="yesButton" destination="YcP-hm-khd" id="KSJ-4H-fCy"/>

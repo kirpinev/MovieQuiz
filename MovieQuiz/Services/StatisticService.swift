@@ -59,7 +59,7 @@ extension StatisticService: StatisticServiceProtocol {
             if correctAnswers == 0 {
                 return 0
             }
-                        
+            
             return Double(correctAnswers) / Double(gamesCount * 10) * 100
         }
     }
