@@ -1,6 +1,8 @@
 import UIKit
 
+// MARK: - MovieQuizViewController
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+    // MARK: - Properties
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10
@@ -9,6 +11,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var alertPresenter: AlertPresenterProtocol?
     private var statisticService: StatisticServiceProtocol = StatisticService()
     
+    // MARK: - Outlets
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var textLabel: UILabel!
     @IBOutlet weak private var counterLabel: UILabel!
@@ -20,6 +23,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loadingActivityIndicator.hidesWhenStopped = true
+        
         questionFactory = QuestionFactory(delegate: self, moviesLoader: MoviesLoader())
         alertPresenter = AlertPresenter(delegate: self)
         
@@ -27,7 +32,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory?.loadData()
     }
     
-    // MARK: - QuestionFactoryDelegate
+    // MARK: - QuestionFactoryDelegate Methods
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question else {
             return
@@ -50,13 +55,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         showNetworkError(message: error.localizedDescription)
     }
     
+    // MARK: - Helper Methods
     func showLoadingIndicator() {
-        loadingActivityIndicator.isHidden = false
         loadingActivityIndicator.startAnimating()
     }
     
     func hideLoadingIndicator() {
-        loadingActivityIndicator.isHidden = true
         loadingActivityIndicator.stopAnimating()
     }
     
@@ -165,6 +169,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }))
     }
     
+    // MARK: - Actions
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         handleAnswer(isYes: false)
     }
