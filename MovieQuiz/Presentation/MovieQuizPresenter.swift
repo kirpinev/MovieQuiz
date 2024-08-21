@@ -8,13 +8,13 @@
 import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
-    private var currentQuestionIndex = 0
     let questionsAmount: Int = 10
     var correctAnswers: Int = 0
     var currentQuestion: QuizQuestion?
-    
-    weak var viewController: MovieQuizViewControllerProtocol?
     var questionFactory: QuestionFactoryProtocol?
+    
+    private var currentQuestionIndex = 0
+    private weak var viewController: MovieQuizViewControllerProtocol?
     private let statisticService: StatisticServiceProtocol = StatisticService()
     
     init(viewController: MovieQuizViewControllerProtocol) {
@@ -34,18 +34,10 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         )
     }
     
-    func isLastQuestion() -> Bool {
-        currentQuestionIndex == questionsAmount - 1
-    }
-    
     func restartGame() {
         currentQuestionIndex = 0
         correctAnswers = 0
         questionFactory?.requestNextQuestion()
-    }
-    
-    func switchToNextQuestion() {
-        currentQuestionIndex += 1
     }
     
     func noButtonClicked() {
@@ -62,9 +54,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         guard let currentQuestion else {
             return
         }
-        
+                
         let isCorrect = currentQuestion.correctAnswer == isYes
-        
+                
         viewController?.showAnswerResult(isCorrect: isCorrect)
         
         if (isCorrect) {
@@ -132,5 +124,13 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         DispatchQueue.main.async { [weak self] in
             self?.viewController?.showQuestion(quiz: viewModel)
         }
+    }
+    
+    private func isLastQuestion() -> Bool {
+        currentQuestionIndex == questionsAmount - 1
+    }
+    
+    private func switchToNextQuestion() {
+        currentQuestionIndex += 1
     }
 }
